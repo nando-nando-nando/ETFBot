@@ -21,12 +21,12 @@ except:
 # Filenames
 today = datetime.datetime.now().strftime("%m-%d-%y")
 yesterday = (datetime.datetime.now() - datetime.timedelta(1)).strftime("%m-%d-%y")
-fileLocNew = f"holdings/cnbs/{today}.xlsx"
-fileLocOld = f"holdings/cnbs/{yesterday}.xlsx"
-imgFileLocNew = f"holdings/cnbs/imgs/ForesideAmplify_CNBS_Holdings_{today}.png"
+fileLocNew = f"holdings/potx/{today}.xlsx"
+fileLocOld = f"holdings/potx/{yesterday}.xlsx"
+imgFileLocNew = f"holdings/potx/imgs/GlobalX_POTX_Holdings_{today}.png"
 
 # Collect CSV
-dls = "https://amplifyetfs.com/Data/Feeds/ForesideAmplify.40XL.XL_Holdings.csv"
+dls = "https://www.globalxetfs.com/funds/potx/?download_full_holdings=true"
 urllib.request.urlretrieve(dls, fileLocNew)  # For Python 3
 
 wb = openpyxl.Workbook()
@@ -35,10 +35,7 @@ ws = wb.active
 with open(fileLocNew) as f:
     reader = csv.reader(f, delimiter=',')
     for row in reader:
-        if row[1] == "Account":
-            ws.append(row)
-        if row[1] == "CNBS" and "Cash" not in row[2]:
-            # print(row[2])
+        if "information" not in row[0] and row[2] != "CASH":
             ws.append(row)
 wb.save(fileLocNew)
 
@@ -66,23 +63,26 @@ openedList = dict()
 closedList = dict()
 
 #Todo: make this all suck less
-row = 1
-for cell in sheetNew['C']:
-    if  not cell.value or len(cell.value) < 2 or row == 1:
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
+row = 2
+for cell in sheetNew['B']:
+    print(sheetNew[f'F{row}'].value)
+    if  not cell.value or len(cell.value) < 2 or row == 2 or "None" in str(sheetNew[f'F{row}'].value):
         row = row+1
         pass
     else:
-        newPairs[cell.value] = int(float(sheetNew[f'F{row}'].value))
+        newPairs[cell.value] = int(locale.atof(str(sheetNew[f'F{row}'].value)))
         # print(f'{cell.value}:{newPairs[cell.value]}')
         row = row+1
 
-row = 1
-for cell in sheetOld['C']:
-    if  not cell.value or len(cell.value) < 2 or row == 1:
+row = 2
+for cell in sheetOld['B']:
+    if  not cell.value or len(cell.value) < 2 or row == 2 or "None" in str(sheetOld[f'F{row}'].value):
         row = row+1
         pass
     else:
-        oldPairs[cell.value] = int(float(sheetOld[f'F{row}'].value))
+        oldPairs[cell.value] = int(locale.atof(str(sheetOld[f'F{row}'].value)))
         # print(f'{cell.value}:{oldPairs[cell.value]}')
         row = row+1
 
@@ -104,7 +104,7 @@ if not bool(diffList) and not bool(openedList) and not bool(closedList):
     exit()
 
 # Build the tweet message, paginate if necessary
-tweet = [f'The latest @ForesideAmplify $CNBS #ETF holdings are out🌿\n{today}\n\n']
+tweet = [f'The latest @GlobalXETFs $POTX #ETF holdings are out🌿\n{today}\n\n']
 page = 0
 if bool(diffList):
     tweet[page] = tweet[page] + 'Position Changes\n' 
@@ -148,26 +148,26 @@ if (page>0):
 else:
     print(tweet[0])
         
-# #Upload image
-# #Model: {'_api': <tweepy.api.API object at 0x0000025B82EB60A0>, 'media_id': 1362203886765838338, 'media_id_string': '1362203886765838338', 'size': 42703, 'expires_after_secs': 86400, 'image': {'image_type': 'image/png', 'w': 1007, 'h': 562}}
-# mediaobj = api.media_upload(imgFileLocNew)
+# # #Upload image
+# # #Model: {'_api': <tweepy.api.API object at 0x0000025B82EB60A0>, 'media_id': 1362203886765838338, 'media_id_string': '1362203886765838338', 'size': 42703, 'expires_after_secs': 86400, 'image': {'image_type': 'image/png', 'w': 1007, 'h': 562}}
+# # mediaobj = api.media_upload(imgFileLocNew)
 
-# # #Send tweet(s)
-# # replyId = 0
-# # for pg in tweet:
-# #     try:
-# #         if replyId == 0:
-# #             status = api.update_status(status=pg, media_ids=[mediaobj.media_id_string])
-# #             replyId = status.id_str
-# #         else:
-# #             status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
-# #             replyId = status.id_str
-# #     except tweepy.TweepError as e:
-# #         print("ERROR during tweet, closing...")
-# #         print(e.__dict__)
-# #         print(e.api_code) #code 186 is tweet too long
-# #         exit()
-# #     except Exception as e:
-# #         print("ERROR during tweet, closing...")
-# #         print(e.__dict__)
-# #         exit()
+# # # #Send tweet(s)
+# # # replyId = 0
+# # # for pg in tweet:
+# # #     try:
+# # #         if replyId == 0:
+# # #             status = api.update_status(status=pg, media_ids=[mediaobj.media_id_string])
+# # #             replyId = status.id_str
+# # #         else:
+# # #             status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
+# # #             replyId = status.id_str
+# # #     except tweepy.TweepError as e:
+# # #         print("ERROR during tweet, closing...")
+# # #         print(e.__dict__)
+# # #         print(e.api_code) #code 186 is tweet too long
+# # #         exit()
+# # #     except Exception as e:
+# # #         print("ERROR during tweet, closing...")
+# # #         print(e.__dict__)
+# # #         exit()
