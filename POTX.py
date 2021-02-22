@@ -67,7 +67,7 @@ import locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
 row = 2
 for cell in sheetNew['B']:
-    print(sheetNew[f'F{row}'].value)
+    #print(sheetNew[f'F{row}'].value)
     if  not cell.value or len(cell.value) < 2 or row == 2 or "None" in str(sheetNew[f'F{row}'].value):
         row = row+1
         pass
