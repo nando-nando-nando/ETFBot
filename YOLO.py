@@ -37,6 +37,12 @@ wbOld = load_workbook(fileLocOld,  data_only=True)
 sheetNew = wbNew.active
 sheetOld = wbOld.active
 
+for column_cells in sheetNew.columns: 
+  unmerged_cells = list(filter(lambda cell_to_check: cell_to_check.coordinate not in sheetNew.merged_cells, column_cells)) 
+  length = max(len(str(cell.value)) for cell in unmerged_cells) 
+  sheetNew.column_dimensions[unmerged_cells[0].column_letter].width = length * .8
+wbNew.save(fileLocNew)
+
 #Convert Excel sheet to img for tweet attachment
 import excel2img
 excel2img.export_img(fileLocNew,imgFileLocNew,None, None)
@@ -87,7 +93,7 @@ try:
         exit()
 
     # Build the tweet message, paginate if necessary
-    tweet = [f'The latest @AdvisorShares $YOLO #ETF holdings are out🌿🇨🇦\n{yesterday}\n\n']
+    tweet = [f'The latest @AdvisorShares $YOLO holdings are out🌿🇨🇦\n#potstocks\n{today}\n\n']
     page = 0
     if bool(diffList):
         tweet[page] = tweet[page] + 'Position Changes\n' 

@@ -104,7 +104,7 @@ if not bool(diffList) and not bool(openedList) and not bool(closedList):
     exit()
 
 # Build the tweet message, paginate if necessary
-tweet = [f'The latest @ForesideAmplify $CNBS #ETF holdings are out🌿\n{today}\n\n']
+tweet = [f'The latest @ForesideAmplify $CNBS holdings are out🌿\n#potstocks\n{today}\n\n']
 page = 0
 if bool(diffList):
     tweet[page] = tweet[page] + 'Position Changes\n' 

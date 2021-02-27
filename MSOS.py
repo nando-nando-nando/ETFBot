@@ -38,6 +38,12 @@ wbOld = load_workbook(fileLocOld, data_only=True)
 sheetNew = wbNew.active
 sheetOld = wbOld.active
 
+for column_cells in sheetNew.columns: 
+  unmerged_cells = list(filter(lambda cell_to_check: cell_to_check.coordinate not in sheetNew.merged_cells, column_cells)) 
+  length = max(len(str(cell.value)) for cell in unmerged_cells) 
+  sheetNew.column_dimensions[unmerged_cells[0].column_letter].width = length * .8
+wbNew.save(fileLocNew)
+
 #Convert Excel sheet to img for tweet attachment
 excel2img.export_img(fileLocNew,imgFileLocNew,None, None)
 
