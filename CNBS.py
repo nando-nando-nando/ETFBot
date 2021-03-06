@@ -152,22 +152,22 @@ else:
 # #Model: {'_api': <tweepy.api.API object at 0x0000025B82EB60A0>, 'media_id': 1362203886765838338, 'media_id_string': '1362203886765838338', 'size': 42703, 'expires_after_secs': 86400, 'image': {'image_type': 'image/png', 'w': 1007, 'h': 562}}
 # mediaobj = api.media_upload(imgFileLocNew)
 
-# # #Send tweet(s)
-# # replyId = 0
-# # for pg in tweet:
-# #     try:
-# #         if replyId == 0:
-# #             status = api.update_status(status=pg, media_ids=[mediaobj.media_id_string])
-# #             replyId = status.id_str
-# #         else:
-# #             status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
-# #             replyId = status.id_str
-# #     except tweepy.TweepError as e:
-# #         print("ERROR during tweet, closing...")
-# #         print(e.__dict__)
-# #         print(e.api_code) #code 186 is tweet too long
-# #         exit()
-# #     except Exception as e:
-# #         print("ERROR during tweet, closing...")
-# #         print(e.__dict__)
-# #         exit()
+# #Send tweet(s)
+# replyId = 0
+# for pg in tweet:
+#     try:
+#         if replyId == 0:
+#             status = api.update_status(status=pg, media_ids=[mediaobj.media_id_string])
+#             replyId = status.id_str
+#         else:
+#             status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
+#             replyId = status.id_str
+#     except tweepy.TweepError as e:
+#         print("ERROR during tweet, closing...")
+#         print(e.__dict__)
+#         print(e.api_code) #code 186 is tweet too long
+#         exit()
+#     except Exception as e:
+#         print("ERROR during tweet, closing...")
+#         print(e.__dict__)
+#         exit()
