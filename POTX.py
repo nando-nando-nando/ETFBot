@@ -5,17 +5,18 @@ import datetime
 import urllib.request
 import openpyxl
 import settings
+import twitter
+import pprint
 
-auth = tweepy.OAuthHandler(settings.api_key, settings.secret)
-auth.set_access_token(settings.access_token, settings.access_secret)
 
+pp = pprint.PrettyPrinter(indent=4)
 # Auth with Twitter
 try:
-    api = tweepy.API(auth)
-    if api.verify_credentials() == False:
-        raise Exception("Couldn't authenticate with Twitter.")
-except:
-    print("Couldn't authenticate with Twitter.")
+    api = twitter.auth()
+    pp.pprint("Logged in as " + api.me()._json['name'])
+except Exception as e:
+    print("ERROR: Couldn't authenticate with Twitter. ")
+    print(e)
     exit()
 
 # Filenames
