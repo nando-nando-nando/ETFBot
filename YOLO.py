@@ -2,11 +2,12 @@
 import tweepy
 import datetime
 import urllib
+import settings
 from openpyxl import load_workbook
 
 
-auth = tweepy.OAuthHandler('', '')
-auth.set_access_token('', '')
+auth = tweepy.OAuthHandler(settings.api_key, settings.secret)
+auth.set_access_token(settings.access_token, settings.access_secret)
 
 # Auth with Twitter
 try:

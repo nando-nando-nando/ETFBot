@@ -4,10 +4,10 @@ import csv
 import datetime
 import urllib.request
 import openpyxl
+import settings
 
-
-auth = tweepy.OAuthHandler('', '')
-auth.set_access_token('', '')
+auth = tweepy.OAuthHandler(settings.api_key, settings.secret)
+auth.set_access_token(settings.access_token, settings.access_secret)
 
 # Auth with Twitter
 try:
