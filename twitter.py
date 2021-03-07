@@ -8,6 +8,6 @@ def auth():
 
     api = tweepy.API(auth)
     if api.verify_credentials() == False:
-        raise Exception("Couldn't authenticate with Twitter.")
+        raise Exception("Credential verification failed. Check your creds in settings.py")
     else:
         return api

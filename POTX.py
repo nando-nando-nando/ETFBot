@@ -2,14 +2,14 @@
 import tweepy
 import csv
 import datetime
-import urllib.request
 import openpyxl
 import settings
 import twitter
 import pprint
-
-
+import filehandler
+import re
 pp = pprint.PrettyPrinter(indent=4)
+
 # Auth with Twitter
 try:
     api = twitter.auth()
@@ -20,31 +20,44 @@ except Exception as e:
     exit()
 
 # Filenames
-today = datetime.datetime.now().strftime("%m-%d-%y")
-yesterday = (datetime.datetime.now() - datetime.timedelta(1)).strftime("%m-%d-%y")
+common_date_format = "%m-%d-%y"
+today = datetime.datetime.now().strftime(common_date_format)
+yesterday = (datetime.datetime.now() - datetime.timedelta(1)).strftime(common_date_format)
 fileLocNew = f"holdings/potx/{today}.xlsx"
 fileLocOld = f"holdings/potx/{yesterday}.xlsx"
+
+fileLocTemp = f"holdings/potx/{today}.csv"
 imgFileLocNew = f"holdings/potx/imgs/GlobalX_POTX_Holdings_{today}.png"
+url = "https://www.globalxetfs.com/funds/potx/?download_full_holdings=true"
 
 # Collect CSV
-dls = "https://www.globalxetfs.com/funds/potx/?download_full_holdings=true"
-urllib.request.urlretrieve(dls, fileLocNew)  # For Python 3
+# filehandler.collectcsv(fileLocTemp, url)
 
 wb = openpyxl.Workbook()
 ws = wb.active
+date = ''
 
-with open(fileLocNew) as f:
-    reader = csv.reader(f, delimiter=',')
-    for row in reader:
-        if "information" not in row[0] and row[2] != "CASH":
-            ws.append(row)
-wb.save(fileLocNew)
+# Grab the date and important rows. 
+# This is ETF specific
+try:
+    with open(fileLocTemp) as f:
+        reader = csv.reader(f, delimiter=',')
+        for row in reader:
+            # pp.pprint(row[0])
+            match = re.search(r'\d{2}\/\d{2}\/\d{4}', row[0]) 
+            if  match is not None: #Get the date           
+                date = datetime.datetime.strptime(match.group(), "%m/%d/%Y").date().strftime(common_date_format)
+            if "information" not in row[0] and row[2] != "CASH": #Get the holdings rows
+                ws.append(row)
+except Exception as e:
+    print("ERROR: Couldn't collect the date and rows from the latest holdings csv. ")
+    print(e)
+    exit()
 
-wbNew = openpyxl.load_workbook(fileLocNew, data_only=True)
-wbOld = openpyxl.load_workbook(fileLocOld,  data_only=True)
+# wb.save(fileLocNew) Don't save it until you compare
 
-sheetNew = wbNew.active
-sheetOld = wbOld.active
+# wbNew = openpyxl.load_workbook(fileLocNew, data_only=True)
+wbOld = filehandler.previous_day("holdings/potx",datetime.datetime.now(), 5)
 
 for column_cells in sheetNew.columns: 
   unmerged_cells = list(filter(lambda cell_to_check: cell_to_check.coordinate not in sheetNew.merged_cells, column_cells)) 
