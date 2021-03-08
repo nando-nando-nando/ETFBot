@@ -1,5 +1,4 @@
 import locale
-# TODO: consolidate this all further
 
 # row_start - the first row above the tickers and shares held, typically the header row
 def pair_separation(sheetNew, sheetOld, tickerKey, sharesKey, row_start, row_modifier):
@@ -14,7 +13,7 @@ def pair_separation(sheetNew, sheetOld, tickerKey, sharesKey, row_start, row_mod
     for cell in sheetNew[tickerKey]:
                 
         # If the row is empty or has unexpected values, move on. Otherwise, add it to the pairs list
-        if  ( not cell.value 
+        if  ( not cell.value #These rules are just an aggregate of all tracked ETFs. TODO:Move these to their respective ETFs.
                 or len(cell.value) < 2 
                 or row <= row_start 
                 or "Ticker" in cell.value 
@@ -124,19 +123,16 @@ def tweet_paginator(lastPage, tweet):
     return tweet
 
 import sys
-
+# Taken from: https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input
 def query_yes_no(question, default="no"):
-    """
-    Ask a yes/no question via raw_input() and return their answer.
+    # Ask a yes/no question via raw_input() and return their answer.
 
-    "question" is a string that is presented to the user.
-    "default" is the presumed answer if the user just hits <Enter>.
-        It must be "yes" (the default), "no" or None (meaning
-        an answer is required of the user).
+    # "question" is a string that is presented to the user.
+    # "default" is the presumed answer if the user just hits <Enter>.
+    #     It must be "yes" (the default), "no" or None (meaning
+    #     an answer is required of the user).
 
-    The "answer" return value is True for "yes" or False for "no".
-    Taken from: https://stackoverflow.com/questions/3041986/apt-command-line-interface-like-yes-no-input
-    """
+    # The "answer" return value is True for "yes" or False for "no".    
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     if default is None:

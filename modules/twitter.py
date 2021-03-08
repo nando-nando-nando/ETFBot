@@ -1,16 +1,17 @@
 # https://docs.tweepy.org/
 import tweepy
-import settings
+# My modules
+import modules.settings
 
 # Returns the api handler for making tweepy calls
 def auth():
     try:
-        auth = tweepy.OAuthHandler(settings.api_key, settings.api_secret)
-        auth.set_access_token(settings.access_token, settings.access_secret)
+        auth = tweepy.OAuthHandler(modules.settings.api_key, modules.settings.api_secret)
+        auth.set_access_token(modules.settings.access_token, modules.settings.access_secret)
 
         api = tweepy.API(auth)
         if api.verify_credentials() == False:
-            raise Exception("Credential verification failed. Check your creds in settings.py")
+            raise Exception("Credential verification failed. Check your creds in modules.settings.py")
         else:
             return api
     except Exception as e:

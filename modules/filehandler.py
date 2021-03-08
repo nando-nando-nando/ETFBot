@@ -2,8 +2,10 @@ import urllib.request
 import csv
 import openpyxl
 import datetime
-import settings
 import re
+# My modules
+import modules.settings
+
 
 # Saves the CSV to local storage
 # Most ETFs publish their holdings as CSVs
@@ -20,16 +22,16 @@ def previous_day(insheet_date_format_datetime, insheet_date_format_regex, file_r
     for i in range(1, search_range):
         try:
             # For each day, lookg for a date in the first few rows. Otherwise, move on
-            prevday = (today - datetime.timedelta(i)).strftime(settings.common_date_format)        
+            prevday = (today - datetime.timedelta(i)).strftime(modules.settings.common_date_format)        
             fileLoc = f"{file_root}/{prevday}.xlsx"        
             wb = openpyxl.load_workbook(fileLoc, data_only=True)
             ws = wb.active
             # Look at the top 4 rows in the first column for the date 
             for row in ws.iter_rows(min_row=1, max_col=1, max_row=4, values_only=True):            
                 print(row[0])
-                match = re.search(insheet_date_format_regex, str(row[0]))
+                match = re.search(insheet_date_format_regex, str(row[0]))#This row index is ETF-specific, but they all use it so far
                 if match is not None:
-                    date = datetime.datetime.strptime(match.group(), insheet_date_format_datetime).date().strftime(settings.common_date_format)
+                    date = datetime.datetime.strptime(match.group(), insheet_date_format_datetime).date().strftime(modules.settings.common_date_format)
                     print(f"Found a previous holdings file: {wb.active}")
                     return wb, date         
         except FileNotFoundError as fe:
