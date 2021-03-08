@@ -4,6 +4,7 @@ import datetime
 import urllib
 import settings
 from openpyxl import load_workbook
+import processor
 
 
 auth = tweepy.OAuthHandler(settings.api_key, settings.secret)
@@ -48,46 +49,15 @@ wbNew.save(fileLocNew)
 import excel2img
 excel2img.export_img(fileLocNew,imgFileLocNew,None, None)
 
-# Setup dictionaries with old and new sets of ticker/share# pairs
-newPairs = dict()
-oldPairs = dict()
 diffList = dict()
 openedList = dict()
 closedList = dict()
 try:
-    #Todo: make this all suck less
-    row = 1
-    for cell in sheetNew['C']:
-        if  not cell.value or len(cell.value) < 2 or row == 1:
-            row = row+1
-            pass
-        else:
-            newPairs[cell.value] = sheetNew[f'F{row}'].value
-            # print(f'{cell.value}:{newPairs[cell.value]}')
-            row = row+1
-
-    row = 1
-    for cell in sheetOld['C']:
-        if  not cell.value or len(cell.value) < 2 or row == 1:
-            row = row+1
-            pass
-        else:
-            oldPairs[cell.value] = sheetOld[f'F{row}'].value
-            # print(f'{cell.value}:{oldPairs[cell.value]}')
-            row = row+1
-
+    # Setup dictionaries with old and new sets of ticker/share# pairs   
+    newPairs, oldPairs = processor.pair_separation(sheetNew, sheetOld, 'C', 'F', 1, 0)
+    
     #Separate out newly opened, closed, and updated positions
-    for ticker in newPairs:
-        if ticker in oldPairs:
-            diff = (int(float(newPairs[ticker])) - int(float(oldPairs[ticker])))
-            if diff != 0:
-                diffList[ticker] = diff
-        else: 
-            openedList[ticker] = newPairs[ticker]
-            
-    for ticker in oldPairs:
-        if ticker not in newPairs:
-            closedList[ticker] = oldPairs[ticker]
+    diffList, openedList, closedList = processor.position_changes(newPairs, oldPairs)
 
     if not bool(diffList) and not bool(openedList) and not bool(closedList):
         print(f"There was no difference between the holdings for {today} and {yesterday}. No tweets today")
