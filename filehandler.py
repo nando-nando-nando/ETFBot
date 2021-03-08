@@ -26,7 +26,8 @@ def previous_day(insheet_date_format_datetime, insheet_date_format_regex, file_r
             ws = wb.active
             # Look at the top 4 rows in the first column for the date 
             for row in ws.iter_rows(min_row=1, max_col=1, max_row=4, values_only=True):            
-                match = re.search(insheet_date_format_regex, row[0])
+                print(row[0])
+                match = re.search(insheet_date_format_regex, str(row[0]))
                 if match is not None:
                     date = datetime.datetime.strptime(match.group(), insheet_date_format_datetime).date().strftime(settings.common_date_format)
                     print(f"Found a previous holdings file: {wb.active}")

@@ -74,9 +74,9 @@ def position_changes(newPairs, oldPairs):
     print(closedList)
     return diffList, openedList, closedList
 
-def tweet_builder(diffList, openedList, closedList, date):
-# Build the tweet message, paginate if necessary
-    tweet = [f'The latest @GlobalXETFs $POTX holdings are out🌿\n#potstocks\n{date}\n\n']
+def tweet_builder(diffList, openedList, closedList, tweetHeader):
+    # Build the tweet message, paginate if necessary
+    tweet = [tweetHeader]
     page = 0
     if bool(diffList):
         tweet[page] = tweet[page] + 'Position Changes\n' 
@@ -110,4 +110,15 @@ def tweet_builder(diffList, openedList, closedList, date):
                 tweet.append('')
             tweet[page] = tweet[page] + f'\n  ${ticker.ljust(8)}' + f'{closedList[ticker]:,d}'
     return tweet, page
-    
+
+def tweet_paginator(lastPage, tweet):
+    if (lastPage>0):
+        pageCount = 0
+        while pageCount <= lastPage:
+            # Add the page number
+            tweet[pageCount] = tweet[pageCount] + f'\n\n{pageCount+1}/{lastPage+1}' 
+            print(tweet[pageCount])
+            pageCount = pageCount + 1
+    else:
+        print(tweet[0])
+    return tweet
