@@ -9,7 +9,9 @@ import filehandler
 import processor
 import settings
 import twitter
+import traceback 
 
+# @retry(stop=stop_after_attempt(4))
 try:
     pp = pprint.PrettyPrinter(indent=4)
 
@@ -101,10 +103,15 @@ try:
         tweet, lastPage = processor.tweet_builder(diffList, openedList, closedList, header)
 
     # Add a page number if there are more than one pages (280 chars max per tweet)
-    tweet = processor.tweet_paginator(lastPage, tweet)    
+    tweet = processor.tweet_paginator(lastPage, tweet)
 except Exception as e:
     print("ERROR: Something went wrong before tweeting, closing...")
     print(e)
+    traceback.print_exc()
     exit()
 
-# twitter.pic_and_tweet(api, imgFileLocNew, tweet)
+if processor.query_yes_no("Ready to tweet?"):
+    twitter.pic_and_tweet(api, imgFileLocNew, tweet)
+    print("TWEET: Holdings tweet sent.")
+else:
+    print("No tweet sent. Closing...")
