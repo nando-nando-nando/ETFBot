@@ -123,6 +123,6 @@ except Exception as e:
 
 if modules.processor.query_yes_no("Ready to tweet?"):
     modules.twitter.pic_and_tweet(api, imgFileLocNew, tweet)
-    print("TWEET: Holdings tweet sent.")
+    print("TWEET: Holdings tweet sent. Make sure you commit the new files!")
 else:
     print("No tweet sent. Closing...")
