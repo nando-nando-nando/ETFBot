@@ -3,6 +3,15 @@ import tweepy
 # My modules
 import modules.settings
 
+def dupe_check(api, tweetCount, tweetFirstPage):
+    # Read in the last few tweets and check for duplicates   
+    timeline = api.user_timeline(count=tweetCount, exclude_replies=True, include_rts=False, tweet_mode='extended')
+    for status in timeline:
+        message = status._json['full_text']    
+        if message in tweetFirstPage or tweetFirstPage in message:        
+            print(f"\n\nDuplicate tweet found in timeline, doing nothing for now..")        
+            exit()
+
 # Returns the api handler for making tweepy calls
 def auth():
     try:

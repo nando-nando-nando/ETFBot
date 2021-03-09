@@ -3,6 +3,8 @@ import csv
 import openpyxl
 import datetime
 import re
+import excel2img
+from retrying import retry
 # My modules
 import modules.settings
 
@@ -47,4 +49,6 @@ def resize_columns(ws):
         ws.column_dimensions[unmerged_cells[0].column_letter].width = length * 1.2
     return ws
 
-
+@retry #This function is prone to transient failures
+def excel_screenshot(sourceFileLoc, imgFileLoc):
+    excel2img.export_img(sourceFileLoc, imgFileLoc, None, None)

@@ -2,7 +2,6 @@ import datetime
 import openpyxl
 import pprint
 import os
-import excel2img
 import getopt
 import sys
 import traceback
@@ -59,6 +58,8 @@ SharesColumn = etf.SharesColumn                 #Excel column index for the shar
 rowStart = etf.rowStart                         #First row to start looking for holdings info
 rowModifier = etf.rowModifier                   #Hard to explain, tweaks the shares held row offset when storing in newPairs
 
+trackedEtfCount = 4                             #Update by hand for now
+
 # Run common logic and ETF-specific functions
 try:
     pp = pprint.PrettyPrinter(indent=4)    
@@ -94,8 +95,8 @@ try:
     os.remove(fileLocTemp)  
 
     # Convert Excel sheet to img for tweet attachment
-    excel2img.export_img(fileLocNew,imgFileLocNew,None, None)
-
+    modules.filehandler.excel_screenshot(fileLocNew, imgFileLocNew)
+    
     # Setup dictionaries with old and new sets of ticker/share# pairs
     newPairs, oldPairs = modules.processor.pair_separation(sheetNew, sheetOld, TickerColumn, SharesColumn, rowStart, rowModifier)
 
@@ -115,6 +116,10 @@ try:
 
     # Add a page number if there are more than one pages (280 chars max per tweet)
     tweet = modules.processor.tweet_paginator(lastPage, tweet)    
+
+    # Check for duplicate tweets
+    modules.twitter.dupe_check(api, trackedEtfCount*2, tweet[0])
+
 except Exception as e:
     print("ERROR: Something went wrong before tweeting, closing...")
     print(e)
