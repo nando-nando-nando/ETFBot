@@ -54,7 +54,7 @@ def pair_separation(sheetNew, sheetOld, tickerKey, sharesKey, row_start, row_mod
     return newPairs, oldPairs
 
 # Pairs should be dictionaries in a 'Ticker':'SharesHeld' format
-def position_changes(newPairs, oldPairs):
+def position_changes(newPairs, oldPairs, etfTicker):
     diffList = dict()
     openedList = dict()
     closedList = dict()
@@ -72,7 +72,7 @@ def position_changes(newPairs, oldPairs):
     for ticker in oldPairs:
         if ticker not in newPairs:
             closedList[ticker] = oldPairs[ticker]
-    logger.info("Position changes:")
+    logger.info(f"${etfTicker} position changes:")
     logger.info(diffList)
     logger.info(openedList)
     logger.info(closedList)
