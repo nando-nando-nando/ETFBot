@@ -6,10 +6,23 @@ import getopt
 import sys
 import traceback
 import importlib
+import logging
+import logging.handlers
 # My modules
 import modules.filehandler
 import modules.processor
 import modules.twitter
+import modules.logs
+
+# Log config
+logFormat = '%(asctime)s | %(module)s | %(name)s |  %(levelname)s: %(message)s'
+logDateFormat = '%m/%d/%Y %I:%M:%S %p'
+logDebugFile = 'logs/DEBUG.log'
+logInfoFile = 'logs/INFO.log'
+logger = modules.logs.setupLogger(__name__, logFormat, logDateFormat, logDebugFile, logInfoFile)
+# Setup the basic log config to catch debug output from third-party modules
+logging.basicConfig(filename=logDebugFile, format=logFormat, datefmt=logDateFormat, level=logging.DEBUG )
+logger.info(f"Logfiles established: {logDebugFile} | {logInfoFile}")
 
 # Get commandline arguments
 try:
