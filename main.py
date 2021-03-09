@@ -108,7 +108,7 @@ try:
     if ( not bool(diffList) 
             and not bool(openedList) 
             and not bool(closedList) ):    
-        tweet = [f'{header}No changes today!']
+        tweet = [f'{header}\n\nNo changes today!']
         print(f"TWEET: There was no difference in the holdings for {dateOld} and {date}. \nSending the 'no changes' tweet.")                
     else:
         # Build up the tweet message 
