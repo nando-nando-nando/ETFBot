@@ -32,7 +32,7 @@ def previous_day(insheet_date_format_datetime, insheet_date_format_regex, file_r
                 match = re.search(insheet_date_format_regex, str(row[0]))#This row index is ETF-specific, but they all use it so far
                 if match is not None:
                     date = datetime.datetime.strptime(match.group(), insheet_date_format_datetime).date().strftime(modules.settings.common_date_format)
-                    print(f"Found a previous holdings file: {wb.active}")
+                    print(f"Found a previous holdings file: {fileLoc}")
                     return wb, date         
         except FileNotFoundError as fe:
             print(f"Expected error: {fe}")
