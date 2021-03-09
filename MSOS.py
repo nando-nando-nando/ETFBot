@@ -16,8 +16,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 # Variables
 insheet_date_format = "%m/%d/%Y"
-oldsheet_date_format = "%Y-%m-%d"
-oldsheetDateRegex = r'\d{4}-\d{1,2}-\d{1,2}'
+oldsheet_date_format = insheet_date_format
+oldsheetDateRegex = r'\d{1,2}\/\d{1,2}\/\d{4}'
 today = datetime.datetime.now().strftime(modules.settings.common_date_format)
 yesterday = (datetime.datetime.now() - datetime.timedelta(3)).strftime(modules.settings.common_date_format)
 holdingsRoot = "holdings/msos"

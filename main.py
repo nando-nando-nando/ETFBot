@@ -125,7 +125,7 @@ try:
             and not bool(openedList) 
             and not bool(closedList) ):    
         tweet = [f'{header}\n\nNo changes today!']
-        logger.info(f"TWEET: There was no difference in the holdings for {dateOld} and {date}. \nSending the 'no changes' tweet.")                
+        logger.info(f"TWEET: There was no difference in the holdings for {dateOld}(insheet) and {date}(insheet). Sending the 'no changes' tweet.")                
     else:
         # Build up the tweet message 
         tweet, lastPage = modules.processor.tweet_builder(diffList, openedList, closedList, header)
