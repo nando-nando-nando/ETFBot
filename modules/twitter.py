@@ -1,7 +1,12 @@
 # https://docs.tweepy.org/
 import tweepy
 # My modules
+import logging
+import modules.logs
 import modules.settings
+
+# Log config
+logger = logging.getLogger(__name__)
 
 def dupe_check(api, tweetCount, tweetFirstPage):
     # Read in the last few tweets and check for duplicates   
@@ -9,7 +14,8 @@ def dupe_check(api, tweetCount, tweetFirstPage):
     for status in timeline:
         message = status._json['full_text']    
         if message in tweetFirstPage or tweetFirstPage in message:        
-            print(f"\n\nDuplicate tweet found in timeline, doing nothing for now..")        
+            logger.critical("Duplicate tweet found in timeline, doing nothing for now..")
+            logging.shutdown()       
             exit()
 
 # Returns the api handler for making tweepy calls
@@ -24,8 +30,8 @@ def auth():
         else:
             return api
     except Exception as e:
-        print("ERROR: Couldn't authenticate with Twitter. ")
-        print(e)
+        logger.critical("ERROR: Couldn't authenticate with Twitter. ")
+        logger.critical(e)
 
 def pic_and_tweet(api, imgFileLoc, tweet):
     # mediaObj model: {'_api': <tweepy.api.API object at 0x0000025B82EB60A0>, 
@@ -46,9 +52,9 @@ def pic_and_tweet(api, imgFileLoc, tweet):
                 status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
                 replyId = status.id_str
         except tweepy.TweepError as e:
-            print("ERROR: TweepError thrown during tweet:")
-            print(e.__dict__)
-            print(e.api_code) #code 186 is tweet too long
+            logger.critical("ERROR: TweepError thrown during tweet:")
+            logger.critical(e.__dict__)
+            logger.critical(e.api_code) #code 186 is tweet too long
         except Exception as e:
-            print("ERROR: Exception thrown during tweet:")
-            print(e.__dict__)
+            logger.critical("ERROR: Exception thrown during tweet:")
+            logger.critical(e.__dict__)

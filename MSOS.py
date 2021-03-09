@@ -3,8 +3,14 @@ import datetime
 import pprint
 import re
 import traceback
+import logging
 # My modules
 import modules.settings
+import modules.logs
+
+# Log config
+logger = logging.getLogger(__name__)
+
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -41,7 +47,8 @@ def date_and_rows(sheet, header):
             header += f'{date}' #Add the sheet's date to the tweet header
             return sheet, date, header
     except Exception as e:
-        print("ERROR: Couldn't collect the date and rows from the latest MSOS holdings csv.")
-        print(e)
-        print(e.__traceback__)
+        logger.critical("ERROR: Couldn't collect the date and rows from the latest MSOS holdings csv.")
+        logger.critical(e)
+        logger.critical(e.__traceback__)
+        logging.shutdown()
         exit()

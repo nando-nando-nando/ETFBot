@@ -1,4 +1,9 @@
 import locale
+import logging
+import modules.logs
+import modules.settings
+# Log config
+logger = logging.getLogger(__name__)
 
 # row_start - the first row above the tickers and shares held, typically the header row
 def pair_separation(sheetNew, sheetOld, tickerKey, sharesKey, row_start, row_modifier):
@@ -67,10 +72,10 @@ def position_changes(newPairs, oldPairs):
     for ticker in oldPairs:
         if ticker not in newPairs:
             closedList[ticker] = oldPairs[ticker]
-    print("Position changes:")
-    print(diffList)
-    print(openedList)
-    print(closedList)
+    logger.info("Position changes:")
+    logger.info(diffList)
+    logger.info(openedList)
+    logger.info(closedList)
     return diffList, openedList, closedList
 
 def tweet_builder(diffList, openedList, closedList, tweetHeader):

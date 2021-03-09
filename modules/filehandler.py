@@ -4,10 +4,13 @@ import openpyxl
 import datetime
 import re
 import excel2img
+import logging
 from retrying import retry
 # My modules
 import modules.settings
-
+import modules.logs
+# Log config
+logger = logging.getLogger(__name__)
 
 # Saves the CSV to local storage
 # Most ETFs publish their holdings as CSVs
@@ -30,14 +33,14 @@ def previous_day(insheet_date_format_datetime, insheet_date_format_regex, file_r
             ws = wb.active
             # Look at the top 4 rows in the first column for the date 
             for row in ws.iter_rows(min_row=1, max_col=1, max_row=4, values_only=True):            
-                print(row[0])
+                logger.debug(row[0])
                 match = re.search(insheet_date_format_regex, str(row[0]))#This row index is ETF-specific, but they all use it so far
                 if match is not None:
                     date = datetime.datetime.strptime(match.group(), insheet_date_format_datetime).date().strftime(modules.settings.common_date_format)
-                    print(f"Found a previous holdings file: {fileLoc}")
+                    logger.info(f"Found a previous holdings file: {fileLoc}")
                     return wb, date         
         except FileNotFoundError as fe:
-            print(f"Expected error: {fe}")
+            logger.warning(fe)
     # If no match 5 days back, throw an error and exit
     raise Exception("No holdings file found within the last 5 days")
 

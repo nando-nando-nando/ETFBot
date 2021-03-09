@@ -1,6 +1,5 @@
 import datetime
 import openpyxl
-import pprint
 import os
 import getopt
 import sys
@@ -13,41 +12,47 @@ import modules.filehandler
 import modules.processor
 import modules.twitter
 import modules.logs
-
-# Log config
-logFormat = '%(asctime)s | %(module)s | %(name)s |  %(levelname)s: %(message)s'
-logDateFormat = '%m/%d/%Y %I:%M:%S %p'
-logDebugFile = 'logs/DEBUG.log'
-logInfoFile = 'logs/INFO.log'
-logger = modules.logs.setupLogger(__name__, logFormat, logDateFormat, logDebugFile, logInfoFile)
-# Setup the basic log config to catch debug output from third-party modules
-logging.basicConfig(filename=logDebugFile, format=logFormat, datefmt=logDateFormat, level=logging.DEBUG )
-logger.info(f"Logfiles established: {logDebugFile} | {logInfoFile}")
+import modules.settings
 
 # Get commandline arguments
 try:
-    options, remainder = getopt.getopt(sys.argv[1:],'e:i')
+    options, remainder = getopt.getopt(sys.argv[1:],'t:vi', ['ticker=','verbose','nointeract'])
 except getopt.GetoptError as e:
-      print ("ERROR:", e.msg)
-      print ('\nUsage: main.py [-e <ETF Ticker>] [-i]')
-      print ('-e: specific ETF ticker symbol')
-      print ('-i: non-interactive run (tweets without prompt)')
+      print(e.msg)
+      print ('\nUsage: main.py [-t <ETF Ticker>] [-i, -d]')
+      print ('--ticker, -t: Specific ETF ticker symbol')
+      print ('--verbose, -v: Debug output')
+      print ('--nointeract, -i: Non-interactive run (tweets without prompt)')
       sys.exit(2)
 
+# Set arg switches
 nonInteractive = False
 chosenEtf = None
+streamLevel = "INFO"
 for opt, arg in options:
-    if opt in '-e' and not arg.isspace(): # Run the passed ETF
-        print('Chosen ETF: ', arg)
+    if ((opt == '-t' or opt == '--ticker') and not arg.isspace()): # Run the passed ETF        
         chosenEtf = arg
-    elif opt in '-i': # Run in non-interactive mode
+    elif opt == '-i' or opt == '--nointeract': # Run in non-interactive mode
         nonInteractive = True
+    elif opt == '-v' or opt == '--verbose':
+        streamLevel = "DEBUG"
+
+# Log config
+logger = modules.logs.setupLogger(__name__, modules.settings.logFormat, 
+                                    modules.settings.streamFormat, modules.settings.logDateFormat, 
+                                    modules.settings.streamDateFormat, streamLevel,
+                                    modules.settings.logDebugFile, modules.settings.logInfoFile)
+# Setup the basic log config to catch debug output from third-party modules
+# logging.basicConfig(format=logFormat, datefmt=logDateFormat, level=os.environ.get("LOGLEVEL", "INFO") )
+logger.info(f"Logfiles established: {modules.settings.logDebugFile} | {modules.settings.logInfoFile}")
 
 if chosenEtf is None:
     # TODO: add multi-etf logic here
-    print("You need to select an ETF for now")
+    logger.critical("You need to select an ETF for now")
+    logging.shutdown()
     exit()
 else:
+    logger.info(f'Chosen ETF: ${arg}')
     etf=importlib.import_module(chosenEtf) #This loads the etf-specific module and runs any code not in a function
 
 ## Load variables from the ETF module
@@ -75,11 +80,9 @@ trackedEtfCount = 4                             #Update by hand for now
 
 # Run common logic and ETF-specific functions
 try:
-    pp = pprint.PrettyPrinter(indent=4)    
-
     # Auth with Twitter
     api = modules.twitter.auth()
-    pp.pprint("Logged in as " + api.me()._json['name'])
+    logger.info("Logged in as " + api.me()._json['name'])
 
     # Download the latest CSV
     modules.filehandler.collectcsv(fileLocTemp, url)
@@ -99,7 +102,7 @@ try:
     if date == dateOld:
         if os.path.exists(fileLocTemp):
             os.remove(fileLocTemp)
-        print(f"\n\nThe latest sheet has the same date ({date}) as the last ({dateOld}), doing nothing for now..")
+        logger.critical(f"The latest sheet has the same date ({date}) as the last ({dateOld}), doing nothing for now..")
         exit()
 
     # Resize new sheet columns and save it
@@ -122,7 +125,7 @@ try:
             and not bool(openedList) 
             and not bool(closedList) ):    
         tweet = [f'{header}\n\nNo changes today!']
-        print(f"TWEET: There was no difference in the holdings for {dateOld} and {date}. \nSending the 'no changes' tweet.")                
+        logger.info(f"TWEET: There was no difference in the holdings for {dateOld} and {date}. \nSending the 'no changes' tweet.")                
     else:
         # Build up the tweet message 
         tweet, lastPage = modules.processor.tweet_builder(diffList, openedList, closedList, header)
@@ -134,13 +137,15 @@ try:
     modules.twitter.dupe_check(api, trackedEtfCount*2, tweet[0])
 
 except Exception as e:
-    print("ERROR: Something went wrong before tweeting, closing...")
-    print(e)
+    logger.critical("Something went wrong BEFORE TWEETING, closing...")
+    logger.critical(e)
     traceback.print_exc()
+    logging.shutdown()
     exit()
 
 if modules.processor.query_yes_no("Ready to tweet?"):
     modules.twitter.pic_and_tweet(api, imgFileLocNew, tweet)
-    print("TWEET: Holdings tweet sent. Make sure you commit the new files!")
+    logging.info("TWEET: Holdings tweet sent. Make sure you commit the new files!")
 else:
-    print("No tweet sent. Closing...")
+    logging.info("No tweet sent. Closing...")
+logging.shutdown()
