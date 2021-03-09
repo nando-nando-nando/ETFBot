@@ -76,7 +76,7 @@ try:
     date = ''
 
     # Collect the date and holdings rows from the CSV
-    sheetNew, date = etf.date_and_rows(sheetNew)
+    sheetNew, date, header = etf.date_and_rows(sheetNew, header)
 
     # Get the previous day's sheet, taking weekends/holidays into account
     wbOld, dateOld = modules.filehandler.previous_day(oldsheet_date_format, oldsheetDateRegex, holdingsRoot, datetime.datetime.strptime(today, modules.settings.common_date_format), 5)
@@ -109,7 +109,7 @@ try:
             and not bool(openedList) 
             and not bool(closedList) ):    
         tweet = [f'{header}No changes today!']
-        print(f"TWEET: There was no difference in the holdings for {today} and {yesterday}. \nSending the 'no changes' tweet.")                
+        print(f"TWEET: There was no difference in the holdings for {dateOld} and {date}. \nSending the 'no changes' tweet.")                
     else:
         # Build up the tweet message 
         tweet, lastPage = modules.processor.tweet_builder(diffList, openedList, closedList, header)

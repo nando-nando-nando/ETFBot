@@ -20,14 +20,14 @@ fileLocNew = f"{holdingsRoot}/{today}.xlsx"
 fileLocOld = f"{holdingsRoot}/{yesterday}.xlsx"
 imgFileLocNew = f"{holdingsRoot}/imgs/GlobalX_POTX_Holdings_{today}.png"
 url = "https://www.globalxetfs.com/funds/potx/?download_full_holdings=true"
-header = f'The latest @GlobalXETFs $POTX holdings are out🌿\n#potstocks\n{yesterday}\n\n'
+header = f'The latest @GlobalXETFs $POTX holdings are out🌿\n#potstocks\n'
 TickerColumn = 'B'
 SharesColumn = 'F'
 rowStart = 2
 rowModifier = 1
 
 # Return the date and important rows from the passed worksheet 
-def date_and_rows(sheet):
+def date_and_rows(sheet, header):
     try:
         with open(fileLocTemp) as f:
             reader = csv.reader(f, delimiter=',')
@@ -38,7 +38,8 @@ def date_and_rows(sheet):
                     date = datetime.datetime.strptime(match.group(), insheet_date_format).date().strftime(modules.settings.common_date_format)
                 if "information" not in row[0] and row[2] != "CASH": #Get the holdings rows
                     sheet.append(row)
-            return sheet, date
+            header += f'{date}' #Add the sheet's date to the tweet header
+            return sheet, date, header
     except Exception as e:
         print("ERROR: Couldn't collect the date and rows from the latest holdings csv. ")
         print(e)

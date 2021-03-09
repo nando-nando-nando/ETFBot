@@ -20,14 +20,14 @@ fileLocNew = f"{holdingsRoot}/{today}.xlsx"
 fileLocOld = f"{holdingsRoot}/{yesterday}.xlsx"
 imgFileLocNew = f"{holdingsRoot}/imgs/AdvisorShares_MSOS_Holdings_{today}.png"
 url = "https://advisorshares.com/wp-content/uploads/csv/holdings/AdvisorShares_MSOS_Holdings_File.csv"
-header = f'Hey #MSOGang, the latest @AdvisorShares $MSOS holdings are out🌿🇺🇸\n{today}\n\n'
+header = f'Hey #MSOGang, the latest @AdvisorShares $MSOS holdings are out🌿🇺🇸\n'
 TickerColumn = 'C'
 SharesColumn = 'F'
 rowStart = 1
 rowModifier = 0
 
 # Return the date and important rows from the passed worksheet 
-def date_and_rows(sheet):
+def date_and_rows(sheet, header):
     try:
         with open(fileLocTemp) as f:
             reader = csv.reader(f, delimiter=',')
@@ -38,7 +38,8 @@ def date_and_rows(sheet):
                 if  row[2] and not row[2].isspace(): #Get the holdings rows
                     # pp.pprint(row[2])
                     sheet.append(row)
-            return sheet, date
+            header += f'{date}' #Add the sheet's date to the tweet header
+            return sheet, date, header
     except Exception as e:
         print("ERROR: Couldn't collect the date and rows from the latest MSOS holdings csv.")
         print(e)

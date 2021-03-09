@@ -78,7 +78,7 @@ def tweet_builder(diffList, openedList, closedList, tweetHeader):
     tweet = [tweetHeader]
     page = 0
     if bool(diffList):
-        tweet[page] = tweet[page] + 'Position Changes\n' 
+        tweet[page] = tweet[page] + '\n\nPosition Changes\n' 
         for ticker in diffList:
             if len(tweet[page]) >= 240:
                 page = page + 1
