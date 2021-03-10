@@ -14,10 +14,8 @@ def dupe_check(api, tweetCount, tweetFirstPage):
     for status in timeline:
         message = status._json['full_text']    
         if message in tweetFirstPage or tweetFirstPage in message:        
-            logger.critical("Duplicate tweet found in timeline, doing nothing for now..")
-            logging.shutdown()       
-            exit()
-
+            raise Exception("Duplicate tweet found in timeline, doing nothing for now..")
+        
 # Returns the api handler for making tweepy calls
 def auth():
     try:

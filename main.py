@@ -136,8 +136,12 @@ for etfTicker in etfs:
         tweet = modules.processor.tweet_paginator(lastPage, tweet)    
 
         # Check for duplicate tweets
-        modules.twitter.dupe_check(api, modules.settings.trackedEtfCount*2, tweet[0])
-
+        try:
+            modules.twitter.dupe_check(api, modules.settings.trackedEtfCount*2, tweet[0])
+        except Exception as e:
+            logger.critical(e)       
+            continue
+        
     except Exception as e:
         logger.critical(f"Something went wrong BEFORE TWEETING, finished with ${etfTicker}...")
         logger.critical(e)
