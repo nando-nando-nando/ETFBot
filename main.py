@@ -16,18 +16,20 @@ import modules.settings
 
 # Get commandline arguments
 try:
-    options, remainder = getopt.getopt(sys.argv[1:],'t:vi', ['ticker=','verbose','nointeract'])
+    options, remainder = getopt.getopt(sys.argv[1:],'t:ipv', ['ticker=','verbose','nointeract','prod'])
 except getopt.GetoptError as e:
       print(e.msg)
       print ('\nUsage: main.py [-t <ETF Ticker>] [-i, -v]')
       print ('--ticker, -t: Specific ETF ticker symbol')
       print ('--verbose, -v: Debug output')
       print ('--nointeract, -i: Non-interactive run (tweets without prompt)')
+      print ('--prod, -p: Run using the production Twitter credentials')
       sys.exit(2)
 
 # Set arg switches
 nonInteractive = False
 chosenEtf = None
+prodRun = False
 streamLevel = "INFO"
 for opt, arg in options:
     if ((opt == '-t' or opt == '--ticker') and not arg.isspace()): # Run the passed ETF        
@@ -36,6 +38,8 @@ for opt, arg in options:
         nonInteractive = True
     elif opt == '-v' or opt == '--verbose':
         streamLevel = "DEBUG"
+    elif opt == '-p' or opt == '--prod':
+        prodRun = True
 
 # Log config
 logger = modules.logs.setupLogger(__name__, modules.settings.logFormat, 
@@ -83,7 +87,7 @@ for etfTicker in etfs:
     # Run common logic and ETF-specific functions
     try:
         # Auth with Twitter
-        api = modules.twitter.auth()
+        api = modules.twitter.auth(prodRun)
         logger.info("Logged in as " + api.me()._json['name'])
 
         # Download the latest CSV

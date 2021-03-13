@@ -17,10 +17,14 @@ def dupe_check(api, tweetCount, tweetFirstPage):
             raise Exception("Duplicate tweet found in timeline, doing nothing for now..")
         
 # Returns the api handler for making tweepy calls
-def auth():
+def auth(prod = False):
     try:
-        auth = tweepy.OAuthHandler(modules.settings.api_key, modules.settings.api_secret)
-        auth.set_access_token(modules.settings.access_token, modules.settings.access_secret)
+        if prod:
+            auth = tweepy.OAuthHandler(modules.settings.api_key_prod, modules.settings.api_secret_prod)
+            auth.set_access_token(modules.settings.access_token_prod, modules.settings.access_secret_prod)
+        else:
+            auth = tweepy.OAuthHandler(modules.settings.api_key, modules.settings.api_secret)
+            auth.set_access_token(modules.settings.access_token, modules.settings.access_secret)
 
         api = tweepy.API(auth)
         if api.verify_credentials() == False:
