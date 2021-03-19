@@ -19,7 +19,7 @@ try:
     options, remainder = getopt.getopt(sys.argv[1:],'t:ipv', ['ticker=','verbose','nointeract','prod'])
 except getopt.GetoptError as e:
       print(e.msg)
-      print ('\nUsage: main.py [-t <ETF Ticker>] [-i, -v]')
+      print ('\nUsage: main.py [-t <ETF Ticker>] [-i, -p, -v]')
       print ('--ticker, -t: Specific ETF ticker symbol')
       print ('--verbose, -v: Debug output')
       print ('--nointeract, -i: Non-interactive run (tweets without prompt)')
