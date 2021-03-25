@@ -33,11 +33,7 @@ access_secret=''
 api_key_prod=''  
 api_secret_prod=''  
 access_token_prod=''  
-access_secret_prod=''  
-  
-\# Tracked ETFs  
-trackedEtfCount = 4 \#Update by hand for now  
-trackedEtfs = ['POTX','CNBS', 'YOLO', 'MSOS']  
+access_secret_prod=''    
   
 \# Copy this verbatim if you don't know how to use it  
 common_date_format = "%m-%d-%y"  
