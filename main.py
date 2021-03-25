@@ -50,7 +50,7 @@ logger = modules.logs.setupLogger(__name__, modules.settings.logFormat,
 # logging.basicConfig(format=logFormat, datefmt=logDateFormat, level=os.environ.get("LOGLEVEL", "INFO") )
 logger.info(f"Logfiles established: {modules.settings.logDebugFile} | {modules.settings.logInfoFile}")
 
-trackedEtfs = ['POTX','CNBS', 'YOLO', 'MSOS'] #Update by hand for now. Also determines order 
+trackedEtfs = ['POTX','CNBS', 'YOLO', 'MJ', 'MSOS'] #Update by hand for now. Also determines order 
 trackedEtfCount = len(trackedEtfs)
 
 # Run for one if a ticker is specified, otherwise run for all etfs
