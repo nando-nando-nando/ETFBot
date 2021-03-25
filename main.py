@@ -50,11 +50,14 @@ logger = modules.logs.setupLogger(__name__, modules.settings.logFormat,
 # logging.basicConfig(format=logFormat, datefmt=logDateFormat, level=os.environ.get("LOGLEVEL", "INFO") )
 logger.info(f"Logfiles established: {modules.settings.logDebugFile} | {modules.settings.logInfoFile}")
 
+trackedEtfs = ['POTX','CNBS', 'YOLO', 'MSOS'] #Update by hand for now. Also determines order 
+trackedEtfCount = len(trackedEtfs)
+
 # Run for one if a ticker is specified, otherwise run for all etfs
 etfs = []
 if chosenEtf is None:
     logger.info(f'Running for ALL ETFs') 
-    etfs = modules.settings.trackedEtfs
+    etfs = trackedEtfs
 else:
     logger.info(f'Running for ONE ETF: ${chosenEtf}')
     etfs = [chosenEtf]
@@ -141,7 +144,7 @@ for etfTicker in etfs:
 
         # Check for duplicate tweets
         try:
-            modules.twitter.dupe_check(api, modules.settings.trackedEtfCount*2, tweet[0])
+            modules.twitter.dupe_check(api, trackedEtfCount*2, tweet[0])
         except Exception as e:
             logger.critical(e)       
             continue
