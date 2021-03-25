@@ -29,6 +29,7 @@ def previous_day(insheet_date_format_datetime, insheet_date_format_regex, file_r
             # For each day, lookg for a date in the first few rows. Otherwise, move on
             prevday = (today - datetime.timedelta(i)).strftime(modules.settings.common_date_format)        
             fileLoc = f"{file_root}/{prevday}.xlsx"        
+            logger.info(f"Looking for previous holdings at: {fileLoc}")
             wb = openpyxl.load_workbook(fileLoc, data_only=True)
             ws = wb.active
             # Look at the top 4 rows in the first column for the date 
