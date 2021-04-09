@@ -25,7 +25,7 @@ fileLocNew = f"{holdingsRoot}/{today}.xlsx"
 fileLocOld = f"{holdingsRoot}/{yesterday}.xlsx"
 imgFileLocNew = f"{holdingsRoot}/imgs/GlobalX_POTX_Holdings_{today}.png"
 url = "https://www.globalxetfs.com/funds/potx/?download_full_holdings=true"
-header = f'The latest @GlobalXETFs $POTX holdings are out🌿\n#potstocks #cannabis\n'
+header = f'🌿@GlobalXETFs $POTX holdings are out\n#potstocks 🇨🇦🇬🇧🇺🇸🇦🇺\n'
 TickerColumn = 'B'
 SharesColumn = 'F'
 rowStart = 2
