@@ -35,21 +35,22 @@ def auth(prod = False):
         logger.critical("ERROR: Couldn't authenticate with Twitter. ")
         logger.critical(e)
 
-def pic_and_tweet(api, imgFileLoc, tweet):
+def pic_and_tweet(api, imgFileLoc, tweet, noChanges = False):
     # mediaObj model: {'_api': <tweepy.api.API object at 0x0000025B82EB60A0>, 
                     # 'media_id': 1362203886765838338, 'media_id_string': '1362203886765838338', 'size': 42703,
-                    # 'expires_after_secs': 86400, 'image': {'image_type': 'image/png', 'w': 1007, 'h': 562}}
-    
-    #Upload image    
-    mediaObj = api.media_upload(imgFileLoc)
-
+                    # 'expires_after_secs': 86400, 'image': {'image_type': 'image/png', 'w': 1007, 'h': 562}}        
     #Send tweet and possibly replies 
     replyId = 0
     for pg in tweet:
         try:
             if replyId == 0: #Initial tweet
-                status = api.update_status(status=pg, media_ids=[mediaObj.media_id_string])
-                replyId = status.id_str
+                if (noChanges): #Tweet without pic
+                    status = api.update_status(status=pg)
+                    replyId = status.id_str
+                else: #Tweet with pic                    
+                    mediaObj = api.media_upload(imgFileLoc) #Upload image    
+                    status = api.update_status(status=pg, media_ids=[mediaObj.media_id_string])
+                    replyId = status.id_str
             else: #A reply for every page after
                 status = api.update_status(status=pg, in_reply_to_status_id=status.id_str)
                 replyId = status.id_str

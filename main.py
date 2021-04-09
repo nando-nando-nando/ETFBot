@@ -130,12 +130,14 @@ for etfTicker in etfs:
 
         tweet = ['']
         lastPage = 0
+        noChanges = True
         if ( not bool(diffList) 
                 and not bool(openedList) 
                 and not bool(closedList) ):    
-            tweet = [f'{header}\n\nNo changes today!']
+            tweet = [f'{header}\n\nNo changes today!']            
             logger.info(f"TWEET: There was no difference in ${etfTicker} holdings for {dateOld}(insheet) and {date}(insheet). Sending the 'no changes' tweet.")                
         else:
+            noChanges = False
             # Build up the tweet message 
             tweet, lastPage = modules.processor.tweet_builder(diffList, openedList, closedList, header)
 
@@ -156,7 +158,7 @@ for etfTicker in etfs:
         continue
 
     if modules.processor.query_yes_no("Ready to tweet?"):
-        modules.twitter.pic_and_tweet(api, imgFileLocNew, tweet)
+        modules.twitter.pic_and_tweet(api, imgFileLocNew, tweet, noChanges)
         logging.info(f"TWEET: Holdings tweet sent for ${etfTicker}. Make sure you commit the new files!")
     else:
         logging.info(f"No tweet sent. Finished with ${etfTicker}...")
