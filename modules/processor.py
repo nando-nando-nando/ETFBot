@@ -88,7 +88,7 @@ def tweet_builder(diffList, openedList, closedList, tweetHeader):
             if len(tweet[page]) >= 240:
                 page = page + 1
                 tweet.append('')
-            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(8)}' + f'{diffList[ticker]:,d}'
+            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(10)}' + f'{diffList[ticker]:,d}'
     if bool(openedList):
         if len(tweet[page]) >= 240:
             page = page + 1
@@ -97,10 +97,10 @@ def tweet_builder(diffList, openedList, closedList, tweetHeader):
         else:
             tweet[page] = tweet[page] + '\n\nOpened Positions\n' 
         for ticker in openedList:
-            if len(tweet[page]) >= 260:
+            if len(tweet[page]) >= 240:
                 page = page + 1
                 tweet.append('')
-            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(8)}' + f'{openedList[ticker]:,d}'
+            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(10)}' + f'{openedList[ticker]:,d}'
     if bool(closedList):
         if len(tweet[page]) >= 240:
             page = page + 1
@@ -109,10 +109,10 @@ def tweet_builder(diffList, openedList, closedList, tweetHeader):
         else:
             tweet[page] = tweet[page] + '\n\nClosed Positions\n'
         for ticker in closedList:
-            if len(tweet[page]) >= 260:
+            if len(tweet[page]) >= 240:
                 page = page + 1
                 tweet.append('')
-            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(8)}' + f'{closedList[ticker]:,d}'
+            tweet[page] = tweet[page] + f'\n  ${ticker.ljust(10)}' + f'{closedList[ticker]:,d}'
     return tweet, page
 
 def tweet_paginator(lastPage, tweet):

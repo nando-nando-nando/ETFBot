@@ -104,7 +104,7 @@ for etfTicker in etfs:
         sheetNew, date, header = etf.date_and_rows(sheetNew, header)
 
         # Get the previous day's sheet, taking weekends/holidays into account
-        wbOld, dateOld = modules.filehandler.previous_day(oldsheet_date_format, oldsheetDateRegex, holdingsRoot, datetime.datetime.strptime(today, modules.settings.common_date_format), 5)
+        wbOld, dateOld = modules.filehandler.previous_day(oldsheet_date_format, oldsheetDateRegex, holdingsRoot, datetime.datetime.strptime(today, modules.settings.common_date_format), 8)
         sheetOld = wbOld.active
 
         # If the dates on both the latest and last sheet are the same, assume no updates from the fund and exit
